@@ -3,6 +3,18 @@ import cv2
 import ddddocr
 import numpy as np
 
+# License check
+from license import verify_license
+
+def check_license_before_start():
+    valid, msg = verify_license()
+    if not valid:
+        print(f"\n❌ {msg}")
+        print("\n💡 Please contact @Zawgyi1296 to get a valid license.")
+        return False
+    print(f"\n✅ {msg}")
+    return True
+
 # ─────────────────────────── Settings ───────────────────────────
 CONCURRENCY  = 300
 BATCH_SIZE   = 300
@@ -18,7 +30,6 @@ limited_codes   = []
 retry_total     = 0
 scan_start_time = None
 
-
 # ANSI escape codes for colors and styles
 COLOR_RESET = "\033[0m"
 BOLD        = "\033[1m"
@@ -29,7 +40,6 @@ RED         = "\033[91m"
 BLUE        = "\033[94m"
 CYAN        = "\033[96m"
 MAGENTA     = "\033[95m"
-
 
 # ═══════════════════════════ LOGO ════════════════════════════════
 
@@ -50,7 +60,6 @@ def show_logo():
 ╚══════════════════════════════════════════════════════════════╝{COLOR_RESET}
 """
     print(logo)
-
 
 # ═══════════════════════════ Interactive Menu ════════════════════
 
@@ -92,7 +101,6 @@ def interactive_menu():
     
     return mode, speed, url
 
-
 # ═══════════════════════════ Code generators ════════════════════
 
 def digit_generator(length):
@@ -133,7 +141,6 @@ def iter_codes(mode):
         else:
             raise ValueError(f"Unknown mode: {mode}")
 
-
 # ═══════════════════════════ Network helpers ════════════════════
 
 def get_mac():
@@ -172,7 +179,6 @@ async def check_session_url(url):
                 return "sessionId" in str(r.url)
     except:
         return False
-
 
 # ═══════════════════════════ Captcha (Improved) ════════════════
 
@@ -221,7 +227,6 @@ async def Varify_Captcha(sess, session_id, text):
     ) as r:
         d = await r.json()
         return session_id if d.get("success") is True else None
-
 
 # ═══════════════════════════ Balance info ═══════════════════════
 
@@ -279,13 +284,11 @@ async def Code_Expires_Date(session_id):
 
     return "Plan:Unknown | Time:Unknown"
 
-
 # ═══════════════════════════ Save result ════════════════════════
 
 def save_result(code, info, kind="SUCCESS"):
     with open(RESULT_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{kind}] {code}  |  {info}\n")
-
 
 # ═══════════════════════════ Voucher check ══════════════════════
 
@@ -379,7 +382,6 @@ async def perform_check(session_url, code):
     else:
         return
 
-
 # ═══════════════════════════ Runner ═════════════════════════════
 
 async def run_bruteforce(mode, session_url, speed):
@@ -462,11 +464,15 @@ async def run_bruteforce(mode, session_url, speed):
         for c in limited_codes:
             print(f"   {YELLOW}{c}{COLOR_RESET}")
 
-
 # ═══════════════════════════ CLI entry ══════════════════════════
 
 async def async_main():
     show_logo()
+    
+    # License စစ်ဆေးပါ
+    if not check_license_before_start():
+        return
+    
     mode, speed, url = interactive_menu()
     
     print(f"\n{BOLD}{BLUE}[*]{COLOR_RESET} {BLUE}Session URL စစ်ဆေးနေသည်...{COLOR_RESET}")
