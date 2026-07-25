@@ -1,19 +1,33 @@
 import sys
 from license import generate_license
+import os
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: python license_manager.py <key> <days>")
-        print("Example: python license_manager.py USER123 30")
-        return
-    key = sys.argv[1]
-    try:
-        days = int(sys.argv[2])
-    except ValueError:
-        print("❌ Days must be a number!")
-        return
-    generate_license(key, days)
-    print(f"📋 License created for Key: {key} | Days: {days}")
+    print("=== ZAW GYI License Generator ===")
+    print("Enter user name and days for each user")
+    print("Type 'q' to quit")
+    print("-" * 30)
+    
+    while True:
+        key = input("Enter user name: ").strip()
+        if key.lower() == 'q':
+            break
+        if not key:
+            print("User name cannot be empty!")
+            continue
+            
+        try:
+            days = int(input("Enter days: ").strip())
+            if days <= 0:
+                print("Days must be positive!")
+                continue
+            generate_license(key, days)
+            print(f"License created for {key} | {days} days")
+            if os.path.exists("license.json"):
+                os.rename("license.json", f"license_{key}_{days}days.json")
+                print(f"Saved as: license_{key}_{days}days.json")
+        except ValueError:
+            print("Please enter a valid number!")
 
 if __name__ == "__main__":
     main()
